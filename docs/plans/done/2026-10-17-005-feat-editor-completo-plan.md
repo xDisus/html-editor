@@ -5,6 +5,7 @@ date: 2026-10-17
 topic: editor-completo
 artifact_contract: ce-unified-plan/v1
 artifact_readiness: implementation-ready
+status: completed
 product_contract_source: ce-brainstorm
 execution: code
 supersedes:
@@ -280,3 +281,14 @@ Fila única, todos os passos em `editor.py` e `editor-ui.html`. Cada passo deixa
 - **`execCommand`** é obsoleto. Funciona hoje e tem saída mapeada (comentário `ponytail:` no U2).
 - **Apagar um nó do original** pode quebrar um script da página. Isso foi aceito no 003, e o desfazer recupera.
 - **Scripts que contam slides** podem não ver slides novos até reabrir o arquivo. Isso foi aceito no 004.
+
+---
+
+## Achados de execução
+
+- U1–U5 entregues juntos em `editor-ui.html` (branch `feat/editor-completo`); `python3 test_editor.py` roda 12 cenários (AE1–AE16).
+- `<h1>` já é negrito por padrão: o botão N numa palavra de título alterna para `font-weight: normal`. É o comportamento do PowerPoint, mas AE2 foi testado num parágrafo.
+- Com 1 slide sobrando, `ed.slides()` devolve `[]` (grupo precisa de 2+): o painel some e "apagar" fica sem efeito. Desfazer continua funcionando.
+- Miniaturas não reaplicam seletores do tipo `:nth-child` da página; só copiam a cor de fundo calculada.
+- Reordenar arrastando miniaturas usa o `draggable` nativo; testado pela API `ed.moveSlide`, não por arrasto real.
+- `ponytail:` `top` em px quando o pai tem altura auto; setas não agrupam desfazer (1 passo por toque).

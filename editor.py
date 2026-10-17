@@ -1,7 +1,7 @@
 """Editor visual de HTML. Uso: python editor.py [pasta]  -> http://localhost:8765
 
 Cada tag do HTML original ganha um data-edid. Ao salvar, o navegador manda só as
-mudanças (texto editado, posição movida) e elas são aplicadas ao HTML ORIGINAL,
+mudanças (texto, estilo, filhos) e elas são aplicadas ao HTML ORIGINAL,
 nunca ao DOM já mexido por scripts. Conteúdo gerado por JS não é editável.
 """
 import sys, os, re, html
@@ -11,61 +11,7 @@ from urllib.parse import urlparse, unquote
 
 ROOT = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else "docs")
 
-JS = r"""
-<style data-ed>
-[contenteditable]:hover{outline:1px dashed #38f}[contenteditable]:focus{outline:2px solid #38f}
-#ed-bar{position:fixed;top:8px;right:8px;z-index:2147483647;background:#222;color:#fff;font:13px sans-serif;padding:8px 12px;border-radius:8px}
-#ed-bar button{margin-left:8px}
-</style>
-<div id="ed-bar" data-ed>Clique = editar texto | Alt+arrastar = mover (Alt+Shift = mover o bloco pai) <button id="ed-save">Salvar</button><span id="ed-msg"></span></div>
-<script data-ed>
-document.querySelectorAll('body [data-edid]').forEach(e=>{
-  if(e.closest('svg,script,style'))return;
-  if([...e.childNodes].some(n=>n.nodeType==3&&n.textContent.trim()))e.setAttribute('contenteditable','true');
-});
-addEventListener('input',ev=>ev.target.closest('[data-edid]')?.setAttribute('data-edited','1'));
-addEventListener('paste',ev=>{ev.preventDefault();document.execCommand('insertText',false,ev.clipboardData.getData('text/plain'))});
-addEventListener('click',ev=>{if(ev.target.closest('a')&&!ev.target.closest('[data-ed]'))ev.preventDefault()},true);
-let d=null;
-addEventListener('pointerdown',ev=>{
-  if(!ev.altKey||ev.target.closest('[data-ed]'))return;
-  let el=ev.target.closest('[data-edid]');
-  if(el&&ev.shiftKey)el=el.parentElement?.closest('[data-edid]')||el;
-  if(!el)return;
-  ev.preventDefault();
-  const m=el.style.transform.match(/translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/)||[0,0,0];
-  d={el,x:ev.clientX,y:ev.clientY,ox:+m[1],oy:+m[2],base:el.style.transform.replace(/translate\([^)]*\)/,'').trim()};
-},true);
-addEventListener('pointermove',ev=>{
-  if(!d)return;
-  d.el.style.transform=(d.base+` translate(${d.ox+ev.clientX-d.x}px, ${d.oy+ev.clientY-d.y}px)`).trim();
-  d.el.setAttribute('data-moved','1');
-});
-addEventListener('pointerup',()=>d=null);
-// original numerado UMA vez, ao abrir: os data-edid da página só batem com ele, não com o arquivo já salvo
-const raw=fetch(location.pathname.replace('/edit/','/raw/')).then(r=>r.text());
-document.getElementById('ed-save').onclick=async()=>{
-  const msg=document.getElementById('ed-msg');
-  try{
-    const doc=new DOMParser().parseFromString(await raw,'text/html');
-    const find=e=>doc.querySelector(`[data-edid="${e.dataset.edid}"]`);
-    document.querySelectorAll('[data-edited]').forEach(e=>{
-      const t=find(e); if(!t)return;
-      const c=e.cloneNode(true);
-      c.querySelectorAll('*').forEach(x=>['contenteditable','data-edited','data-moved','data-edid'].forEach(a=>x.removeAttribute(a)));
-      t.innerHTML=c.innerHTML;
-    });
-    document.querySelectorAll('[data-moved]').forEach(e=>{
-      const t=find(e); if(!t)return;
-      const s=e.getAttribute('style'); s?t.setAttribute('style',s):t.removeAttribute('style');
-    });
-    doc.querySelectorAll('[data-edid]').forEach(e=>e.removeAttribute('data-edid'));
-    const r=await fetch(location.pathname.replace('/edit/','/save/'),{method:'POST',body:'<!DOCTYPE html>\n'+doc.documentElement.outerHTML});
-    msg.textContent=r.ok?' salvo!':' erro '+r.status;
-  }catch(err){msg.textContent=' erro: '+err}
-};
-</script>
-"""
+JS = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "editor-ui.html"), encoding="utf-8").read()
 
 class _Tags(HTMLParser):
     def __init__(self, src):
