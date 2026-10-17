@@ -249,6 +249,22 @@ def l_ae13_a_ae16_slides(pg, br):
     pg.evaluate("[...document.querySelectorAll('body > section')].slice(1).forEach(s=>s.remove())")
     pg.evaluate("ed.delSlide()"); assert pg.evaluate("document.querySelectorAll('body > section').length") == 1
 
+@test
+def alinhar_ao_slide_e_painel_com_um_slide(pg, br):
+    pg.goto("http://127.0.0.1:8797/edit/slides.html")
+    # 2 caixas: alinhar ao slide e distribuir com só 2
+    pg.evaluate("ed.select([...document.querySelectorAll('section')[0].children].slice(0,2))")
+    pg.select_option("#ed-alignto", "slide")
+    assert not pg.is_disabled("[data-dist=v]")
+    pg.click("[data-al=l]")
+    a = pg.evaluate("[...ed.sel].map(e=>e.getBoundingClientRect().left)")
+    sl = pg.evaluate("ed.slides()[0].getBoundingClientRect().left")
+    assert all(abs(x - sl) < 1 for x in a), (a, sl)
+    # 1 slide só: painel continua lá e dá pra criar outro
+    pg.evaluate("[...document.querySelectorAll('body > section')].slice(1).forEach(s=>s.remove())")
+    pg.wait_for_selector("#ed-newslide"); pg.click("#ed-newslide")
+    assert pg.evaluate("document.querySelectorAll('body > section').length") == 2
+
 try:
     time.sleep(0.6)
     with sync_playwright() as p:
