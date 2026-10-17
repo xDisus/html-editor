@@ -1,34 +1,48 @@
 <style data-ed>
-[contenteditable]:hover{outline:1px dashed #38f}[contenteditable]:focus{outline:2px solid #38f}
+:root{--ed-bg:#17181b;--ed-bg2:#202226;--ed-line:#33363c;--ed-fg:#e8eaee;--ed-dim:#9aa0ab;--ed-acc:#4d8dff;--ed-hov:#2b2e34;--ed-r:6px;--ed-f:system-ui,-apple-system,"Segoe UI",sans-serif}
+[contenteditable]:hover{outline:1px dashed var(--ed-acc)}[contenteditable]:focus{outline:2px solid var(--ed-acc)}
 body{margin-top:44px!important}
-html.ed-p body{margin-left:170px!important}html.ed-p.ed-pc body{margin-left:30px!important}
-#ed-bar{position:fixed;top:0;left:0;right:0;height:44px;box-sizing:border-box;z-index:2147483647;background:#222;color:#fff;font:13px sans-serif;padding:6px 10px;display:flex;align-items:center;gap:4px;overflow-x:auto;white-space:nowrap}
-#ed-bar button,#ed-bar select,#ed-bar input{font:13px sans-serif;height:28px;min-width:28px}
-#ed-bar button:disabled{opacity:.35}
-#ed-bar .sep{width:1px;height:22px;background:#555;margin:0 4px}
-#ed-path{margin-left:10px;color:#9cf}#ed-path span{cursor:pointer}#ed-path span:hover{text-decoration:underline}
-#ed-panel{position:fixed;top:44px;left:0;bottom:0;width:170px;box-sizing:border-box;z-index:2147483646;background:#333;color:#fff;font:12px sans-serif;overflow:auto;padding:6px}
+html.ed-p body{margin-left:170px!important}html.ed-p.ed-pc body{margin-left:40px!important}
+#ed-bar,#ed-panel{font:13px/1 var(--ed-f);color:var(--ed-fg);-webkit-font-smoothing:antialiased}
+#ed-bar *,#ed-panel *{font-family:inherit}
+#ed-bar{position:fixed;top:0;left:0;right:0;height:44px;box-sizing:border-box;z-index:2147483647;background:var(--ed-bg);border-bottom:1px solid var(--ed-line);padding:0 10px;display:flex;align-items:center;gap:2px;overflow-x:auto;white-space:nowrap;scrollbar-width:thin;scrollbar-color:var(--ed-line) transparent}
+#ed-bar button,#ed-panel button{display:inline-grid;place-items:center;height:30px;min-width:30px;padding:0 6px;border:0;border-radius:var(--ed-r);background:transparent;color:inherit;font-size:13px;cursor:pointer;transition:background .12s,color .12s}
+#ed-bar button:hover,#ed-panel button:hover{background:var(--ed-hov)}
+#ed-bar button:active,#ed-panel button:active{background:var(--ed-line)}
+#ed-bar button:disabled{opacity:.35;pointer-events:none}
+#ed-bar :focus-visible,#ed-panel :focus-visible{outline:2px solid var(--ed-acc);outline-offset:1px}
+#ed-bar svg,#ed-panel svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+#ed-bar button#ed-save{background:var(--ed-acc);color:#fff;font-weight:600;padding:0 14px;margin-right:4px}
+#ed-bar button#ed-save:hover{background:#6ba0ff}
+#ed-bar select,#ed-bar input{height:30px;box-sizing:border-box;border:1px solid var(--ed-line);border-radius:var(--ed-r);background:var(--ed-bg2);color:inherit;font-size:13px;padding:0 8px}
+#ed-bar input{width:52px;text-align:center;font-variant-numeric:tabular-nums}
+#ed-bar select:hover,#ed-bar input:hover{border-color:var(--ed-dim)}
+#ed-bar .sep{width:1px;height:20px;background:var(--ed-line);margin:0 6px}
+#ed-path{margin-left:12px;color:var(--ed-dim)}#ed-path span{cursor:pointer;border-radius:3px;padding:2px 3px}#ed-path span:hover{color:var(--ed-fg);background:var(--ed-hov)}
+#ed-msg{margin-left:8px;color:var(--ed-dim)}
+#ed-panel{position:fixed;top:44px;left:0;bottom:0;width:170px;box-sizing:border-box;z-index:2147483646;background:var(--ed-bg);border-right:1px solid var(--ed-line);overflow:auto;padding:8px;scrollbar-width:thin;scrollbar-color:var(--ed-line) transparent}
 #ed-panel[hidden]{display:none}
-html.ed-pc #ed-panel{width:30px;overflow:hidden}html.ed-pc #ed-panel .th,html.ed-pc #ed-panel .acts button:not(#ed-collapse){display:none}
-#ed-panel .acts{display:flex;gap:3px;margin-bottom:6px;flex-wrap:wrap}
-#ed-panel .th{position:relative;margin-bottom:8px;border:2px solid transparent;cursor:pointer;background:#fff;overflow:hidden;outline:none}
-#ed-panel .th.cur,#ed-panel .th:focus{border-color:#38f}
+html.ed-pc #ed-panel{width:40px;overflow:hidden;padding:8px 4px}html.ed-pc #ed-panel .th,html.ed-pc #ed-panel .acts button:not(#ed-collapse){display:none}
+html.ed-pc #ed-collapse svg{transform:scaleX(-1)}
+#ed-panel .acts{display:flex;gap:2px;margin-bottom:8px;flex-wrap:wrap}
+#ed-panel .th{position:relative;margin-bottom:10px;border:2px solid transparent;border-radius:4px;cursor:pointer;background:#fff;overflow:hidden;outline:none;transition:border-color .12s}
+#ed-panel .th:hover{border-color:var(--ed-dim)}
+#ed-panel .th.cur,#ed-panel .th:focus-visible{border-color:var(--ed-acc)}
 #ed-panel .th .in{position:absolute;left:0;top:0;pointer-events:none}
-#ed-panel .th b{position:absolute;left:2px;top:2px;z-index:1;background:#000a;color:#fff;padding:0 4px;border-radius:3px}
+#ed-panel .th b{position:absolute;left:3px;top:3px;z-index:1;background:#000b;color:#fff;padding:2px 5px;border-radius:3px;font-size:11px;font-variant-numeric:tabular-nums}
 #ed-ov{position:fixed;inset:0;pointer-events:none;z-index:2147483645}
-#ed-ov .o{position:fixed;outline:2px solid #38f;box-sizing:border-box}
-#ed-ov .h{position:fixed;width:9px;height:9px;margin:-5px 0 0 -5px;background:#fff;border:1px solid #38f;pointer-events:auto;box-sizing:border-box}
+#ed-ov .o{position:fixed;outline:2px solid var(--ed-acc);box-sizing:border-box}
+#ed-ov .h{position:fixed;width:9px;height:9px;margin:-5px 0 0 -5px;background:#fff;border:1.5px solid var(--ed-acc);border-radius:2px;pointer-events:auto;box-sizing:border-box}
 #ed-ov .g{position:fixed;background:#f0f}
 </style>
 <div id="ed-bar" data-ed>
-<button id="ed-undo" title="Desfazer (Ctrl+Z)">↶</button><button id="ed-redo" title="Refazer (Ctrl+Y)">↷</button><button id="ed-save">Salvar</button><span class="sep"></span>
+<button id="ed-save">Salvar</button><button id="ed-undo" title="Desfazer (Ctrl+Z)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button><button id="ed-redo" title="Refazer (Ctrl+Y)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button><span class="sep"></span>
 <select id="ed-font" title="Fonte"><option value="Arial">Arial</option><option>Verdana</option><option>Tahoma</option><option>Trebuchet MS</option><option>Georgia</option><option>Times New Roman</option><option>Courier New</option><option id="ed-font-x" hidden></option></select>
 <input id="ed-size" list="ed-sizes" size="3" title="Tamanho"><datalist id="ed-sizes"><option>10<option>12<option>14<option>16<option>18<option>20<option>24<option>28<option>32<option>40<option>48<option>64<option>72</datalist>
-<button id="ed-b" title="Negrito"><b>N</b></button><button id="ed-i" title="Itálico"><i>I</i></button><span class="sep"></span>
-<button data-al="l" title="Alinhar à esquerda">⇤</button><button data-al="c" title="Centralizar">↔</button><button data-al="r" title="Alinhar à direita">⇥</button>
-<button data-al="t" title="Alinhar ao topo">⤒</button><button data-al="m" title="Alinhar ao meio">↕</button><button data-al="b" title="Alinhar à base">⤓</button>
-<button data-dist="h" title="Distribuir na horizontal">⇹</button><button data-dist="v" title="Distribuir na vertical">⇳</button><span class="sep"></span>
-<button id="ed-ins-text" title="Inserir caixa de texto">T+</button><button id="ed-ins-img" title="Inserir imagem">Img+</button><input id="ed-file" type="file" accept="image/*" hidden>
+<button id="ed-b" title="Negrito" style="font-weight:700">N</button><button id="ed-i" title="Itálico" style="font-style:italic;font-family:Georgia,serif">I</button><span class="sep"></span>
+<button data-al="l" title="Alinhar à esquerda"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v16"/><path d="M8 8h12"/><path d="M8 16h7"/></svg></button><button data-al="c" title="Centralizar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18"/><path d="M6 8h12"/><path d="M8.5 16h7"/></svg></button><button data-al="r" title="Alinhar à direita"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4v16"/><path d="M4 8h12"/><path d="M9 16h7"/></svg></button><button data-al="t" title="Alinhar ao topo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16"/><path d="M8 8v12"/><path d="M16 8v7"/></svg></button><button data-al="m" title="Alinhar ao meio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18"/><path d="M8 6v12"/><path d="M16 8.5v7"/></svg></button><button data-al="b" title="Alinhar à base"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16"/><path d="M8 4v12"/><path d="M16 9v7"/></svg></button>
+<button data-dist="h" title="Distribuir na horizontal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v16"/><path d="M20 4v16"/><path d="M9 8h6v8H9z"/></svg></button><button data-dist="v" title="Distribuir na vertical"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16"/><path d="M4 20h16"/><path d="M8 9h8v6H8z"/></svg></button><span class="sep"></span>
+<button id="ed-ins-text" title="Inserir caixa de texto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h10"/><path d="M9 5v13"/><path d="M18 14v6"/><path d="M15 17h6"/></svg></button><button id="ed-ins-img" title="Inserir imagem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h12v12H3z"/><path d="m3 15 4-4 4 4"/><path d="M19 3v6"/><path d="M16 6h6"/></svg></button><input id="ed-file" type="file" accept="image/*" hidden>
 <span id="ed-path"></span><span id="ed-msg"></span>
 </div>
 <aside id="ed-panel" data-ed hidden></aside>
@@ -359,7 +373,7 @@ function build(){
   if(!ed.cur||!sl.includes(ed.cur))ed.cur=sl[0];
   const full=sl.length!==shown.length||sl.some((s,i)=>s!==shown[i]);
   if(full){
-    P.innerHTML='<div class="acts"><button id="ed-newslide" title="Slide novo">+</button><button id="ed-dupslide" title="Duplicar slide">⧉</button><button id="ed-delslide" title="Apagar slide">🗑</button><button id="ed-collapse" title="Recolher">‹</button></div>';
+    P.innerHTML='<div class="acts"><button id="ed-newslide" title="Slide novo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></button><button id="ed-dupslide" title="Duplicar slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9h11v11H9z"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg></button><button id="ed-delslide" title="Apagar slide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/></svg></button><button id="ed-collapse" title="Recolher"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button></div>';
     sl.forEach((s,i)=>P.append(thumb(s,i)));shown=sl;
   }else{const i=sl.indexOf(ed.cur),t=$$('.th',P)[i];if(t)t.replaceWith(thumb(ed.cur,i))}
   hilite();
