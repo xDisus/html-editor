@@ -292,3 +292,4 @@ Fila única, todos os passos em `editor.py` e `editor-ui.html`. Cada passo deixa
 - Miniaturas não reaplicam seletores do tipo `:nth-child` da página; só copiam a cor de fundo calculada.
 - Reordenar arrastando miniaturas usa o `draggable` nativo; testado pela API `ed.moveSlide`, não por arrasto real.
 - `ponytail:` `top` em px quando o pai tem altura auto; setas não agrupam desfazer (1 passo por toque).
+- Review P2 em aberto: resize só usa `min-height` (caixa com `height` fixo não encolhe); mover em páginas com `transform: scale` erra o delta; setas não agrupam desfazer; miniaturas de slides não atuais ficam velhas após desfazer; mouseup fora da janela deixa a ação aberta (`undo` agora ignora enquanto aberta).

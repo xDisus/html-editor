@@ -61,8 +61,8 @@ ed.end=()=>{
   if(a.items.length){ed.U.push(a);ed.R.length=0;fire()}
 };
 ed.act=(label,fn)=>{ed.begin(label);try{return fn()}finally{ed.end()}};
-ed.undo=()=>{flush();const a=ed.U.pop();if(!a)return;[...a.items].reverse().forEach(i=>put(i.el,i.k,i.before));ed.R.push(a);fire()};
-ed.redo=()=>{flush();const a=ed.R.pop();if(!a)return;a.items.forEach(i=>put(i.el,i.k,i.after));ed.U.push(a);fire()};
+ed.undo=()=>{if(cur)return;flush();const a=ed.U.pop();if(!a)return;[...a.items].reverse().forEach(i=>put(i.el,i.k,i.before));ed.R.push(a);fire()};
+ed.redo=()=>{if(cur)return;flush();const a=ed.R.pop();if(!a)return;a.items.forEach(i=>put(i.el,i.k,i.after));ed.U.push(a);fire()};
 ed.onchange=f=>cbs.push(f);
 function fire(){ed.sel=ed.sel.filter(e=>e.isConnected);ed.refresh();cbs.forEach(f=>f())}
 // digitação: um passo por bloco, "antes" gravado no beforeinput; 1 s parado fecha o passo
@@ -76,7 +76,7 @@ addEventListener('beforeinput',ev=>{
 
 // ---------- peças comuns ----------
 const ATTRS=['data-edid','id','contenteditable','data-edited','data-styled','data-kids','data-ed-new'];
-ed.cleanClone=el=>{
+ed.cleanClone=(el,ids)=>{
   const c=el.cloneNode(true);
   const walk=(s,d,keep)=>{
     keep=keep||s.hasAttribute('data-edited')||s.hasAttribute('data-ed-new');
@@ -88,11 +88,11 @@ ed.cleanClone=el=>{
     });
   };
   walk(el,c,false);
-  [c,...c.querySelectorAll('*')].forEach(x=>ATTRS.forEach(a=>x.removeAttribute(a)));
+  [c,...c.querySelectorAll('*')].forEach(x=>ATTRS.forEach(a=>{if(!(ids&&a==='id'))x.removeAttribute(a)}));
   return c;
 };
 ed.isContainer=el=>!el.matches('img,svg,br,hr,input,video,canvas,iframe')&&getComputedStyle(el).display!=='inline'&&![...el.childNodes].some(n=>n.nodeType===3&&n.textContent.trim());
-const isBox=e=>e!==document.body&&e!==document.documentElement&&(e.hasAttribute('data-edid')||e.hasAttribute('data-ed-new'))&&getComputedStyle(e).display!=='inline';
+const isBox=e=>e!==document.body&&e!==document.documentElement&&(e.hasAttribute('data-edid')||e.closest('[data-ed-new]'))&&getComputedStyle(e).display!=='inline';
 ed.outer=el=>{for(let p=el.parentElement;p;p=p.parentElement)if(isBox(p))return p;return null};
 const boxOf=t=>{
   if(!t.closest||t.closest('[data-ed]'))return null;
@@ -338,7 +338,7 @@ ed.dup=()=>{
   ed.select(out);
 };
 ed.copy=()=>{ed.clip=copies(ed.sel)};
-ed.paste=()=>{if(ed.clip.length)addNew(copies(ed.clip),null,false)};
+ed.paste=()=>{if(ed.clip.length)addNew(ed.clip.map(c=>c.cloneNode(true)),null,false)};
 
 // ---------- slides ----------
 const P=$('#ed-panel');let shown=[];
@@ -409,7 +409,7 @@ addEventListener('keydown',ev=>{
   if(ctrl&&lk==='y'){ev.preventDefault();ed.redo();return}
   const a=document.activeElement;
   if(a&&/^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName))return;
-  if(a&&a.closest&&a.closest('#ed-panel')){
+  if(a&&a.closest&&a.closest('#ed-panel .th')){
     if(ctrl&&lk==='d'){ev.preventDefault();ed.dupSlide()}
     else if(k==='Delete'||k==='Backspace'){ev.preventDefault();ed.delSlide()}
     return;
@@ -430,10 +430,11 @@ addEventListener('keydown',ev=>{
   else if(arrows[k]){ev.preventDefault();ed.nudge(...arrows[k])}
 },true);
 addEventListener('paste',ev=>{
+  if(document.activeElement.closest('#ed-bar'))return;
   ev.preventDefault();
   if(ed.host())return void document.execCommand('insertText',false,ev.clipboardData.getData('text/plain'));
   const f=[...ev.clipboardData.items].find(i=>i.type.startsWith('image/'));
-  if(f)ed.insertImage(f.getAsFile());else ed.paste();
+  if(f)ed.insertImage(f.getAsFile()).catch(imgErr);else ed.paste();
 },true);
 addEventListener('click',ev=>{if(ev.target.closest('a')&&!ev.target.closest('[data-ed]'))ev.preventDefault()},true);
 
@@ -448,7 +449,8 @@ $$('[data-al]').forEach(b=>b.onclick=()=>ed.align(b.dataset.al));
 $$('[data-dist]').forEach(b=>b.onclick=()=>ed.distribute(b.dataset.dist));
 $('#ed-ins-text').onclick=ed.insertText;
 $('#ed-ins-img').onclick=()=>$('#ed-file').click();
-$('#ed-file').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)ed.insertImage(f)};
+$('#ed-file').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)ed.insertImage(f).catch(imgErr)};
+const imgErr=()=>{$('#ed-msg').textContent=' imagem não suportada'};
 const label=e=>e.tagName.toLowerCase()+(e.classList[0]?'.'+e.classList[0]:'');
 $('#ed-path').addEventListener('click',ev=>{const s=ev.target.closest('span[data-n]');if(s)ed.select([ed.pathNodes[+s.dataset.n]])});
 ed.refresh=()=>{
@@ -503,7 +505,7 @@ $('#ed-save').onclick=async()=>{
         return[]; // gerado por script
       }));
     });
-    $$('[data-edited]').forEach(e=>{const t=!inNew(e)&&find(e);if(t)t.innerHTML=ed.cleanClone(e).innerHTML});
+    $$('[data-edited]').forEach(e=>{const t=!inNew(e)&&find(e);if(t)t.innerHTML=ed.cleanClone(e,true).innerHTML});
     $$('[data-styled]').forEach(e=>{
       const t=!inNew(e)&&find(e);if(!t)return;
       const s=e.getAttribute('style');s?t.setAttribute('style',s):t.removeAttribute('style');

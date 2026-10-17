@@ -214,7 +214,10 @@ def i_duplicar_copiar_colar_sem_id(pg, br):
     pg.keyboard.press("Control+c"); pg.keyboard.press("Escape")
     pg.evaluate("ed.paste()")
     assert pg.evaluate("document.querySelectorAll('.k').length") == 4
-    save(pg); s = src("dash.html"); assert s.count('class="k"') == 4 and s.count('id="orig"') <= 1; no_marks(s.replace('id="orig"', ""))
+    assert pg.evaluate("[...document.querySelectorAll('.k')].every(k=>k.querySelector('b'))"), "colar perdeu os filhos"
+    # id dentro de texto editado sobrevive ao salvar
+    pg.evaluate("document.getElementById('t').innerHTML='x <span id=\"nota\">y</span>'; ed.act('t',()=>ed.touch(document.getElementById('t'),'html'))")
+    save(pg); s = src("dash.html"); assert 'id="nota"' in s and s.count('class="k"') == 4 and s.count('id="orig"') <= 1; no_marks(s.replace('id="orig"', ""))
 
 @test
 def l_ae13_a_ae16_slides(pg, br):
