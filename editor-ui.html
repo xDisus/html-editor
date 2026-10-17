@@ -1,49 +1,57 @@
 <style data-ed>
-:root{--ed-bg:#17181b;--ed-bg2:#202226;--ed-line:#33363c;--ed-fg:#e8eaee;--ed-dim:#9aa0ab;--ed-acc:#4d8dff;--ed-hov:#2b2e34;--ed-r:6px;--ed-f:system-ui,-apple-system,"Segoe UI",sans-serif}
-[contenteditable]:hover{outline:1px dashed var(--ed-acc)}[contenteditable]:focus{outline:2px solid var(--ed-acc)}
-body{margin-top:44px!important}
+/* Identidade: preto e amarelo (estilo C6 Bank). Barra de vidro escuro com cápsulas; só aparece o que serve para a seleção. */
+:root{--ed-bg:#0c0c0d;--ed-glass:#0c0c0dd9;--ed-cap:#ffffff12;--ed-line:#ffffff24;--ed-fg:#f4f4f2;--ed-dim:#a3a39c;--ed-acc:#ffd500;--ed-acc-fg:#111;--ed-hov:#ffffff24;--ed-r:8px;--ed-f:system-ui,-apple-system,"Segoe UI",sans-serif}
+[contenteditable]:hover{outline:1px dashed #d9b400}[contenteditable]:focus{outline:2px solid var(--ed-acc)}
+body{margin-top:68px!important}
 html.ed-p body{margin-left:170px!important}html.ed-p.ed-pc body{margin-left:40px!important}
 #ed-bar,#ed-panel{font:13px/1 var(--ed-f);color:var(--ed-fg);-webkit-font-smoothing:antialiased}
 #ed-bar *,#ed-panel *{font-family:inherit}
-#ed-bar{position:fixed;top:0;left:0;right:0;height:44px;box-sizing:border-box;z-index:2147483647;background:var(--ed-bg);border-bottom:1px solid var(--ed-line);padding:0 10px;display:flex;align-items:center;gap:2px;overflow-x:auto;white-space:nowrap;scrollbar-width:thin;scrollbar-color:var(--ed-line) transparent}
-#ed-bar button,#ed-panel button{display:inline-grid;place-items:center;height:30px;min-width:30px;padding:0 6px;border:0;border-radius:var(--ed-r);background:transparent;color:inherit;font-size:13px;cursor:pointer;transition:background .12s,color .12s}
+#ed-bar [hidden]{display:none!important}
+#ed-bar{position:fixed;top:8px;left:8px;right:8px;height:48px;box-sizing:border-box;z-index:2147483647;display:flex;align-items:center;gap:8px;padding:6px;border-radius:16px;background:var(--ed-glass);backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);box-shadow:0 0 0 1px var(--ed-line),0 14px 30px -12px #000a;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+#ed-bar .cap{display:flex;align-items:center;gap:1px;padding:3px;border-radius:11px;background:var(--ed-cap);flex:none}
+#ed-bar button,#ed-panel button{display:inline-grid;place-items:center;height:28px;min-width:30px;padding:0 6px;border:0;border-radius:var(--ed-r);background:transparent;color:inherit;font-size:13px;cursor:pointer;transition:background .12s,color .12s,opacity .12s}
 #ed-bar button:hover,#ed-panel button:hover{background:var(--ed-hov)}
-#ed-bar button:active,#ed-panel button:active{background:var(--ed-line)}
-#ed-bar button:disabled{opacity:.35;pointer-events:none}
+#ed-bar button:active,#ed-panel button:active{background:#ffffff38}
+#ed-bar button:disabled{opacity:.32;pointer-events:none}
 #ed-bar :focus-visible,#ed-panel :focus-visible{outline:2px solid var(--ed-acc);outline-offset:1px}
 #ed-bar svg,#ed-panel svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
-#ed-bar button#ed-save{background:var(--ed-acc);color:#fff;font-weight:600;padding:0 14px;margin-right:4px}
-#ed-bar button#ed-save:hover{background:#6ba0ff}
-#ed-bar select,#ed-bar input{height:30px;box-sizing:border-box;border:1px solid var(--ed-line);border-radius:var(--ed-r);background:var(--ed-bg2);color:inherit;font-size:13px;padding:0 8px}
-#ed-bar input{width:52px;text-align:center;font-variant-numeric:tabular-nums}
-#ed-bar select:hover,#ed-bar input:hover{border-color:var(--ed-dim)}
-#ed-bar .sep{width:1px;height:20px;background:var(--ed-line);margin:0 6px}
-#ed-path{margin-left:12px;color:var(--ed-dim)}#ed-path span{cursor:pointer;border-radius:3px;padding:2px 3px}#ed-path span:hover{color:var(--ed-fg);background:var(--ed-hov)}
-#ed-msg{margin-left:8px;color:var(--ed-dim)}
-#ed-panel{position:fixed;top:44px;left:0;bottom:0;width:170px;box-sizing:border-box;z-index:2147483646;background:var(--ed-bg);border-right:1px solid var(--ed-line);overflow:auto;padding:8px;scrollbar-width:thin;scrollbar-color:var(--ed-line) transparent}
+#ed-bar button#ed-save{height:34px;padding:0 18px;border-radius:10px;background:var(--ed-acc);color:var(--ed-acc-fg);font-weight:700;margin-left:2px}
+#ed-bar button#ed-save:hover{background:#ffe24d}
+#ed-bar select,#ed-bar input{height:28px;box-sizing:border-box;border:0;border-radius:var(--ed-r);background:transparent;color:inherit;font-size:13px;padding:0 6px}
+#ed-bar select option{background:#1a1a1c;color:#f4f4f2}
+#ed-bar select:hover,#ed-bar input:hover{background:var(--ed-hov)}
+#ed-bar input{width:44px;text-align:center;font-variant-numeric:tabular-nums}
+#ed-bar .chip{background:var(--ed-acc);color:var(--ed-acc-fg);font-weight:700;font-size:12px;border-radius:999px;padding:6px 10px;margin:0 3px}
+#ed-bar .sp{flex:1;min-width:8px}
+#ed-path{color:var(--ed-dim);overflow:hidden;text-overflow:ellipsis;max-width:26vw}#ed-path span{cursor:pointer;border-radius:3px;padding:2px 3px}#ed-path span:hover{color:var(--ed-fg);background:var(--ed-hov)}
+#ed-msg{color:var(--ed-dim);margin:0 4px}
+#ed-panel{position:fixed;top:68px;left:8px;bottom:8px;width:154px;box-sizing:border-box;z-index:2147483646;background:var(--ed-glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:16px;box-shadow:0 0 0 1px var(--ed-line),0 14px 30px -12px #000a;overflow:auto;padding:8px;scrollbar-width:thin;scrollbar-color:#ffffff30 transparent}
 #ed-panel[hidden]{display:none}
 html.ed-pc #ed-panel{width:40px;overflow:hidden;padding:8px 4px}html.ed-pc #ed-panel .th,html.ed-pc #ed-panel .acts button:not(#ed-collapse){display:none}
 html.ed-pc #ed-collapse svg{transform:scaleX(-1)}
-#ed-panel .acts{display:flex;gap:2px;margin-bottom:8px;flex-wrap:wrap}
-#ed-panel .th{position:relative;margin-bottom:10px;border:2px solid transparent;border-radius:4px;cursor:pointer;background:#fff;overflow:hidden;outline:none;transition:border-color .12s}
-#ed-panel .th:hover{border-color:var(--ed-dim)}
+#ed-panel .acts{display:flex;gap:2px;margin-bottom:8px;flex-wrap:wrap;padding:3px;border-radius:11px;background:var(--ed-cap)}
+#ed-panel .th{position:relative;margin-bottom:10px;border:2px solid transparent;border-radius:5px;cursor:pointer;background:#fff;overflow:hidden;outline:none;transition:border-color .12s}
+#ed-panel .th:hover{border-color:#ffffff80}
 #ed-panel .th.cur,#ed-panel .th:focus-visible{border-color:var(--ed-acc)}
 #ed-panel .th .in{position:absolute;left:0;top:0;pointer-events:none}
-#ed-panel .th b{position:absolute;left:3px;top:3px;z-index:1;background:#000b;color:#fff;padding:2px 5px;border-radius:3px;font-size:11px;font-variant-numeric:tabular-nums}
+#ed-panel .th b{position:absolute;left:3px;top:3px;z-index:1;background:var(--ed-acc);color:var(--ed-acc-fg);padding:2px 5px;border-radius:3px;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
 #ed-ov{position:fixed;inset:0;pointer-events:none;z-index:2147483645}
-#ed-ov .o{position:fixed;outline:2px solid var(--ed-acc);box-sizing:border-box}
-#ed-ov .h{position:fixed;width:9px;height:9px;margin:-5px 0 0 -5px;background:#fff;border:1.5px solid var(--ed-acc);border-radius:2px;pointer-events:auto;box-sizing:border-box}
+#ed-ov .o{position:fixed;outline:2px solid var(--ed-acc);box-shadow:0 0 0 1px #000;box-sizing:border-box}
+#ed-ov .h{position:fixed;width:9px;height:9px;margin:-5px 0 0 -5px;background:var(--ed-acc);border:1.5px solid #000;border-radius:2px;pointer-events:auto;box-sizing:border-box}
 #ed-ov .g{position:fixed;background:#f0f}
 </style>
 <div id="ed-bar" data-ed>
-<button id="ed-save">Salvar</button><button id="ed-undo" title="Desfazer (Ctrl+Z)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button><button id="ed-redo" title="Refazer (Ctrl+Y)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button><span class="sep"></span>
+<div class="cap"><button id="ed-undo" title="Desfazer (Ctrl+Z)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button><button id="ed-redo" title="Refazer (Ctrl+Y)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button></div>
+<div class="cap" id="ed-c-text" hidden>
 <select id="ed-font" title="Fonte"><option value="Arial">Arial</option><option>Verdana</option><option>Tahoma</option><option>Trebuchet MS</option><option>Georgia</option><option>Times New Roman</option><option>Courier New</option><option id="ed-font-x" hidden></option></select>
 <input id="ed-size" list="ed-sizes" size="3" title="Tamanho"><datalist id="ed-sizes"><option>10<option>12<option>14<option>16<option>18<option>20<option>24<option>28<option>32<option>40<option>48<option>64<option>72</datalist>
-<button id="ed-b" title="Negrito" style="font-weight:700">N</button><button id="ed-i" title="Itálico" style="font-style:italic;font-family:Georgia,serif">I</button><span class="sep"></span>
-<button data-al="l" title="Alinhar à esquerda"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v16"/><path d="M8 8h12"/><path d="M8 16h7"/></svg></button><button data-al="c" title="Centralizar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18"/><path d="M6 8h12"/><path d="M8.5 16h7"/></svg></button><button data-al="r" title="Alinhar à direita"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4v16"/><path d="M4 8h12"/><path d="M9 16h7"/></svg></button><button data-al="t" title="Alinhar ao topo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16"/><path d="M8 8v12"/><path d="M16 8v7"/></svg></button><button data-al="m" title="Alinhar ao meio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18"/><path d="M8 6v12"/><path d="M16 8.5v7"/></svg></button><button data-al="b" title="Alinhar à base"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16"/><path d="M8 4v12"/><path d="M16 9v7"/></svg></button>
-<button data-dist="h" title="Distribuir na horizontal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v16"/><path d="M20 4v16"/><path d="M9 8h6v8H9z"/></svg></button><button data-dist="v" title="Distribuir na vertical"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16"/><path d="M4 20h16"/><path d="M8 9h8v6H8z"/></svg></button><select id="ed-alignto" title="Alinhar em relação a"><option value="sel">À seleção</option><option value="slide">Ao slide</option></select><span class="sep"></span>
-<button id="ed-ins-text" title="Inserir caixa de texto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h10"/><path d="M9 5v13"/><path d="M18 14v6"/><path d="M15 17h6"/></svg></button><button id="ed-ins-img" title="Inserir imagem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h12v12H3z"/><path d="m3 15 4-4 4 4"/><path d="M19 3v6"/><path d="M16 6h6"/></svg></button><input id="ed-file" type="file" accept="image/*" hidden>
-<span id="ed-path"></span><span id="ed-msg"></span>
+<button id="ed-b" title="Negrito" style="font-weight:700">N</button><button id="ed-i" title="Itálico" style="font-style:italic;font-family:Georgia,serif">I</button></div>
+<div class="cap" id="ed-c-sel" hidden><span class="chip" id="ed-count"></span><select id="ed-alignto" title="Alinhar em relação a"><option value="sel">À seleção</option><option value="slide">Ao slide</option></select></div>
+<div class="cap" id="ed-c-al" hidden><button data-al="l" title="Alinhar à esquerda"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v16"/><path d="M8 8h12"/><path d="M8 16h7"/></svg></button><button data-al="c" title="Centralizar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18"/><path d="M6 8h12"/><path d="M8.5 16h7"/></svg></button><button data-al="r" title="Alinhar à direita"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4v16"/><path d="M4 8h12"/><path d="M9 16h7"/></svg></button><button data-al="t" title="Alinhar ao topo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16"/><path d="M8 8v12"/><path d="M16 8v7"/></svg></button><button data-al="m" title="Alinhar ao meio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18"/><path d="M8 6v12"/><path d="M16 8.5v7"/></svg></button><button data-al="b" title="Alinhar à base"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16"/><path d="M8 4v12"/><path d="M16 9v7"/></svg></button></div>
+<div class="cap" id="ed-c-dist" hidden><button data-dist="h" title="Distribuir na horizontal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v16"/><path d="M20 4v16"/><path d="M9 8h6v8H9z"/></svg></button><button data-dist="v" title="Distribuir na vertical"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16"/><path d="M4 20h16"/><path d="M8 9h8v6H8z"/></svg></button></div>
+<div class="cap" id="ed-c-act" hidden><button id="ed-dup" title="Duplicar (Ctrl+D)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9h11v11H9z"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg></button><button id="ed-del" title="Apagar (Delete)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/></svg></button></div>
+<div class="cap"><button id="ed-ins-text" title="Inserir caixa de texto"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h10"/><path d="M9 5v13"/><path d="M18 14v6"/><path d="M15 17h6"/></svg></button><button id="ed-ins-img" title="Inserir imagem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h12v12H3z"/><path d="m3 15 4-4 4 4"/><path d="M19 3v6"/><path d="M16 6h6"/></svg></button><input id="ed-file" type="file" accept="image/*" hidden></div>
+<span id="ed-path"></span><span class="sp"></span><span id="ed-msg"></span><button id="ed-save">Salvar</button>
 </div>
 <aside id="ed-panel" data-ed hidden></aside>
 <div id="ed-ov" data-ed></div>
@@ -468,6 +476,7 @@ $('#ed-font').onchange=e=>{if(e.target.value in FONTS)ed.fmt('font',fontCss(e.ta
 $('#ed-size').onchange=e=>{const v=parseFloat(e.target.value);if(v>0)ed.fmt('size',v)};
 $$('[data-al]').forEach(b=>b.onclick=()=>ed.align(b.dataset.al));
 $('#ed-alignto').onchange=()=>ed.refresh();
+$('#ed-dup').onclick=()=>ed.dup();$('#ed-del').onclick=()=>ed.del();
 $$('[data-dist]').forEach(b=>b.onclick=()=>ed.distribute(b.dataset.dist));
 $('#ed-ins-text').onclick=ed.insertText;
 $('#ed-ins-img').onclick=()=>$('#ed-file').click();
@@ -477,7 +486,10 @@ const label=e=>e.tagName.toLowerCase()+(e.classList[0]?'.'+e.classList[0]:'');
 $('#ed-path').addEventListener('click',ev=>{const s=ev.target.closest('span[data-n]');if(s)ed.select([ed.pathNodes[+s.dataset.n]])});
 ed.refresh=()=>{
   $('#ed-undo').disabled=!(ed.U.length||typing);$('#ed-redo').disabled=!ed.R.length;
-  const h=ed.host(),s0=ed.sel[0];
+  const h=ed.host(),s0=ed.sel[0],n=ed.sel.length;
+  $('#ed-c-text').hidden=!(h||ed.sel.some(b=>[...b.childNodes].some(c=>c.nodeType===3&&c.textContent.trim())));
+  $('#ed-c-sel').hidden=!n||!!h;$('#ed-alignto').hidden=n<2;$('#ed-count').textContent=n+(n>1?' selecionadas':' selecionada');
+  $('#ed-c-al').hidden=!n&&!h;$('#ed-c-dist').hidden=n<2||!!h;$('#ed-c-act').hidden=!n||!!h;
   $$('[data-al="t"],[data-al="m"],[data-al="b"]').forEach(b=>b.disabled=!!h||!ed.sel.length);
   $$('[data-al="l"],[data-al="c"],[data-al="r"]').forEach(b=>b.disabled=!h&&!ed.sel.length);
   $$('[data-dist]').forEach(b=>b.disabled=!!h||ed.sel.length<(onSlide()?2:3));
