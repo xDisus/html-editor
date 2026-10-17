@@ -42,11 +42,12 @@ addEventListener('pointermove',ev=>{
   d.el.setAttribute('data-moved','1');
 });
 addEventListener('pointerup',()=>d=null);
+// original numerado UMA vez, ao abrir: os data-edid da página só batem com ele, não com o arquivo já salvo
+const raw=fetch(location.pathname.replace('/edit/','/raw/')).then(r=>r.text());
 document.getElementById('ed-save').onclick=async()=>{
   const msg=document.getElementById('ed-msg');
   try{
-    const src=await (await fetch(location.pathname.replace('/edit/','/raw/'))).text();
-    const doc=new DOMParser().parseFromString(src,'text/html');
+    const doc=new DOMParser().parseFromString(await raw,'text/html');
     const find=e=>doc.querySelector(`[data-edid="${e.dataset.edid}"]`);
     document.querySelectorAll('[data-edited]').forEach(e=>{
       const t=find(e); if(!t)return;
